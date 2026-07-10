@@ -7,7 +7,7 @@ const LEGAL_LINKS = ['Privacy', 'Terms', 'Security']
 
 export default function Footer() {
   return (
-    <footer className="bg-[#0A0F1E] border-t border-white/10">
+    <footer className="bg-white border-t border-white/10">
       <div className="max-w-[1280px] mx-auto px-6 pt-16 pb-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Logo + Description */}
