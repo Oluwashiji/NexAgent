@@ -22,7 +22,7 @@ const FEATURES = [
   {
     icon: Globe,
     title: 'Embed Anywhere',
-    description: 'One line of JavaScript works on any website — WordPress, Shopify, React, or plain HTML.',
+    description: 'One line of JavaScript works on any website: WordPress, Shopify, React, or plain HTML.',
   },
   {
     icon: BarChart3,
@@ -38,7 +38,7 @@ const FEATURES = [
 
 export default function FeaturesSection() {
   return (
-    <section id="features" className="relative py-20 lg:py-32 bg-[#0A0F1E] overflow-hidden">
+    <section id="features" className="relative py-20 lg:py-32 bg-white overflow-hidden">
       {/* Ambient Glow */}
       <AmbientGlow color="violet" size={600} className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30" />
 
