@@ -173,7 +173,7 @@ function ChatWindow({ messages, isTyping, inputValue, setInputValue, handleSubmi
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-[#0A0F1E]">
+      <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-white">
         <AnimatePresence>
           {messages.map((msg, i) => (
             <motion.div
