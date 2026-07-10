@@ -98,18 +98,18 @@ export default function AnalyticsTab() {
               <AreaChart data={CHAT_VOLUME_DATA}>
                 <defs>
                   <linearGradient id="chatGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="#3B82F6" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#047857" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#047857" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.1)" />
-                <XAxis dataKey="date" tick={{ fill: '#64748B', fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: '#64748B', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="date" tick={{ fill: '#8A7A6B', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: '#8A7A6B', fontSize: 11 }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
                 <Area
                   type="monotone"
                   dataKey="chats"
-                  stroke="#3B82F6"
+                  stroke="#047857"
                   strokeWidth={2}
                   fill="url(#chatGradient)"
                 />
@@ -125,11 +125,11 @@ export default function AnalyticsTab() {
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={TOP_QUESTIONS_DATA} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.1)" horizontal={false} />
-                <XAxis type="number" tick={{ fill: '#64748B', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <XAxis type="number" tick={{ fill: '#8A7A6B', fontSize: 11 }} axisLine={false} tickLine={false} />
                 <YAxis
                   type="category"
                   dataKey="question"
-                  tick={{ fill: '#94A3B8', fontSize: 11 }}
+                  tick={{ fill: '#8A7A6B', fontSize: 11 }}
                   axisLine={false}
                   tickLine={false}
                   width={180}
@@ -141,14 +141,14 @@ export default function AnalyticsTab() {
                     borderRadius: '8px',
                     backdropFilter: 'blur(20px)',
                   }}
-                  labelStyle={{ color: '#94A3B8', fontSize: '11px' }}
-                  itemStyle={{ color: '#F8FAFC', fontSize: '12px' }}
+                  labelStyle={{ color: '#8A7A6B', fontSize: '11px' }}
+                  itemStyle={{ color: '#241C14', fontSize: '12px' }}
                 />
                 <Bar dataKey="count" fill="url(#barGradient)" radius={[0, 4, 4, 0]} />
                 <defs>
                   <linearGradient id="barGradient" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#3B82F6" />
-                    <stop offset="100%" stopColor="#8B5CF6" />
+                    <stop offset="0%" stopColor="#047857" />
+                    <stop offset="100%" stopColor="#D4AF37" />
                   </linearGradient>
                 </defs>
               </BarChart>
