@@ -25,7 +25,7 @@ const STEPS = [
 
 export default function HowItWorksSection() {
   return (
-    <section id="how-it-works" className="relative py-20 lg:py-32 bg-[#0A0F1E]">
+    <section id="how-it-works" className="relative py-20 lg:py-32 bg-white">
       <div className="max-w-[1280px] mx-auto px-6">
         {/* Section Header */}
         <AnimatedSection className="text-center mb-16">
