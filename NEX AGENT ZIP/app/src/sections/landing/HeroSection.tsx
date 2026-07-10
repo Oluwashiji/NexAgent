@@ -6,7 +6,7 @@ import AmbientGlow from '@/components/AmbientGlow'
 
 export default function HeroSection() {
   return (
-    <section id="demo" className="relative min-h-screen pt-[72px] overflow-hidden bg-[#0A0F1E]">
+    <section id="demo" className="relative min-h-screen pt-[72px] overflow-hidden bg-white">
       {/* Ambient Glows */}
       <AmbientGlow color="blue" size={600} className="-top-32 -left-32 opacity-60" />
       <AmbientGlow color="violet" size={500} className="top-1/3 right-0 opacity-50" />
