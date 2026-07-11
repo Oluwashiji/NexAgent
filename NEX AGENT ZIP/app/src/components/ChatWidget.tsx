@@ -196,7 +196,7 @@ function ChatWindow({ messages, isTyping, inputValue, setInputValue, handleSubmi
                 }`}
               >
                 <p className="whitespace-pre-wrap">{msg.text}</p>
-                <span className={`text-[10px] mt-1 block ${msg.sender === 'bot' ? 'text-slate-400' : 'text-blue-200'}`}>
+                <span className={`text-[10px] mt-1 block ${msg.sender === 'bot' ? 'text-slate-400' : 'text-white/70'}`}>
                   {msg.timestamp}
                 </span>
               </div>
