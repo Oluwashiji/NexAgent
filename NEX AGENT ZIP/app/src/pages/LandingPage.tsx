@@ -9,7 +9,7 @@ import ChatWidget from '@/components/ChatWidget'
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#0A0F1E]">
+    <div className="min-h-screen bg-background">
       <Navbar />
       <main>
         <HeroSection />
