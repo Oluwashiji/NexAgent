@@ -43,7 +43,7 @@ export default function AgentsTab() {
           <h2 className="text-2xl font-bold text-slate-50">My Agents</h2>
           <p className="text-sm text-slate-400 mt-1">Manage your AI support agents</p>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-[10px] gradient-primary shadow-[0_2px_12px_rgba(59,130,246,0.3)] hover:shadow-[0_4px_20px_rgba(59,130,246,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer">
+        <button className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-[10px] gradient-primary shadow-[0_2px_12px_rgba(4,120,87,0.3)] hover:shadow-[0_4px_20px_rgba(4,120,87,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer">
           <Plus className="w-4 h-4" />
           Create Agent
         </button>
@@ -123,7 +123,7 @@ export default function AgentsTab() {
               <p className="text-sm text-slate-400 mb-4">
                 Copy this code and paste it before the closing <code className="text-brand-blue">&lt;/body&gt;</code> tag on your website.
               </p>
-              <div className="bg-[#0A0F1E] rounded-lg p-4 font-mono text-sm text-slate-300 break-all">
+              <div className="bg-muted rounded-lg p-4 font-mono text-sm text-slate-300 break-all">
                 {EMBED_CODE}
               </div>
               <button
