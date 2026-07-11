@@ -21,7 +21,7 @@ export default function DashboardPage() {
   const ActiveComponent = TABS[activeTab] || OverviewTab
 
   return (
-    <div className="min-h-screen bg-[#0A0F1E] flex">
+    <div className="min-h-screen bg-background flex">
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Main Content */}
