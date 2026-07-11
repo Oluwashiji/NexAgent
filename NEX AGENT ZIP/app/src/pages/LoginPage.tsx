@@ -27,7 +27,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0F1E] flex">
+    <div className="min-h-screen bg-background flex">
       {/* Left Panel - Brand Side */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -38,7 +38,7 @@ export default function LoginPage() {
         {/* Ambient Glow */}
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%)', filter: 'blur(40px)' }}
+          style={{ background: 'radial-gradient(circle, rgba(4,120,87,0.08) 0%, transparent 70%)', filter: 'blur(40px)' }}
         />
 
         {/* Logo */}
@@ -147,7 +147,7 @@ export default function LoginPage() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.35 }}
               type="submit"
-              className="w-full py-3 text-sm font-semibold text-white rounded-[10px] gradient-primary shadow-[0_2px_12px_rgba(59,130,246,0.3)] hover:shadow-[0_4px_20px_rgba(59,130,246,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer"
+              className="w-full py-3 text-sm font-semibold text-white rounded-[10px] gradient-primary shadow-[0_2px_12px_rgba(4,120,87,0.3)] hover:shadow-[0_4px_20px_rgba(4,120,87,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer"
             >
               Sign in
             </motion.button>
