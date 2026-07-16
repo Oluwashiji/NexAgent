@@ -11,8 +11,17 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.api.routes import health, documents, chat
+from app.core.database import Base, engine
+from app.models import user  # noqa: F401 - imported so its table gets registered
+from app.api.routes import health, documents, chat, auth
 
+app = FastAPI(title="NexAgent API", version="0.1.0")
+
+# Creates any tables that don't exist yet in the database. Safe to run every
+# startup - it does nothing if the tables are already there. Fine for now;
+# once the schema is more settled we'd switch to proper migrations (Alembic)
+# instead of this simple approach.
+Base.metadata.create_all(bind=engine)
 app = FastAPI(title="NexAgent API", version="0.1.0")
 
 app.add_middleware(
@@ -26,6 +35,7 @@ app.add_middleware(
 app.include_router(health.router, prefix="/api", tags=["health"])
 app.include_router(documents.router, prefix="/api", tags=["documents"])
 app.include_router(chat.router, prefix="/api", tags=["chat"])
+app.include_router(auth.router, prefix="/api", tags=["auth"])
 
 
 @app.get("/")
