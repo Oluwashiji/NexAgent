@@ -1,0 +1,28 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.0
+python-dotenv==1.0.1
+python-multipart==0.0.20
+
+# Document processing
+pypdf==5.1.0
+python-docx==1.1.2
+langchain==0.3.13
+langchain-community==0.3.13
+langchain-text-splitters==0.3.4
+
+# Embeddings + vector store
+chromadb==1.5.9
+sentence-transformers==3.3.1
+
+# LLM
+groq==0.15.0
+
+# Database (added when we do Phase 2 - auth/multi-tenancy)
+sqlalchemy==2.0.36
+psycopg2-binary==2.9.10
+
+# Auth (added when we do Phase 2)
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4

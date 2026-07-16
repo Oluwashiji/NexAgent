@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+.env
+storage/uploads/*
+!storage/uploads/.gitkeep
+storage/chroma/*
+!storage/chroma/.gitkeep
+*.db
+.pytest_cache/
+.DS_Store
