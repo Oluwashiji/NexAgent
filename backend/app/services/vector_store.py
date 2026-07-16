@@ -23,10 +23,6 @@ from app.core.config import settings
 
 COLLECTION_NAME = "nexagent_documents"
 
-_embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
-    model_name="all-MiniLM-L6-v2"
-)
-
 _client = None
 _collection = None
 
@@ -38,7 +34,7 @@ def get_collection():
         _client = chromadb.PersistentClient(path=settings.CHROMA_DIR)
         _collection = _client.get_or_create_collection(
             name=COLLECTION_NAME,
-            embedding_function=_embedding_function,
+            embedding_function=embedding_functions.DefaultEmbeddingFunction(),
         )
     return _collection
 
