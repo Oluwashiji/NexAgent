@@ -22,7 +22,6 @@ app = FastAPI(title="NexAgent API", version="0.1.0")
 # once the schema is more settled we'd switch to proper migrations (Alembic)
 # instead of this simple approach.
 Base.metadata.create_all(bind=engine)
-app = FastAPI(title="NexAgent API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
