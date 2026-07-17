@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.database import Base, engine
-from app.models import user  # noqa: F401 - imported so its table gets registered
+from app.models import user, document  # noqa: F401 - imported so their tables get registered
 from app.api.routes import health, documents, chat, auth
 
 app = FastAPI(title="NexAgent API", version="0.1.0")

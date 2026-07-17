@@ -1,12 +1,8 @@
 """
-The chat endpoint. This is what the embeddable widget on a business's
-website will actually call every time a customer sends a message.
-
-It ties together everything we've built so far:
-1. retrieval (vector_store.query_chunks) - find the relevant chunks
-2. generation (llm_service.generate_answer) - write a grounded answer
-
-This completes the core RAG pipeline: upload -> chunk -> embed -> retrieve -> answer.
+Called anonymously by customers on a business's website - no login,
+by design. `business_id` (the owner's user UUID) is the public routing
+key embedded in the widget snippet that tells us whose documents to
+search. It's not a secret; it just scopes retrieval.
 """
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -18,8 +14,9 @@ router = APIRouter()
 
 
 class ChatRequest(BaseModel):
+    business_id: str
     query: str
-    doc_id: str | None = None  # optional: restrict search to one document
+    doc_id: str | None = None
     n_results: int = 4
 
 
@@ -34,15 +31,12 @@ def chat(request: ChatRequest):
         query=request.query,
         n_results=request.n_results,
         doc_id=request.doc_id,
+        owner_id=request.business_id,
     )
-
     context_chunks = [m["text"] for m in matches]
     answer = generate_answer(query=request.query, context_chunks=context_chunks)
 
     return ChatResponse(
         answer=answer,
-        sources=[
-            {"filename": m["metadata"].get("filename"), "distance": m["distance"]}
-            for m in matches
-        ],
+        sources=[{"filename": m["metadata"].get("filename"), "distance": m["distance"]} for m in matches],
     )

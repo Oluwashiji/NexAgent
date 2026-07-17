@@ -39,29 +39,32 @@ def get_collection():
     return _collection
 
 
-def add_chunks(doc_id: str, filename: str, chunks: list[str]) -> None:
-    """Embed and store every chunk from one document."""
+def add_chunks(doc_id: str, filename: str, chunks: list[str], owner_id: str) -> None:
+    """Embed and store every chunk from one document, tagged to its owner."""
     if not chunks:
         return
 
     collection = get_collection()
     ids = [f"{doc_id}_chunk_{i}" for i in range(len(chunks))]
     metadatas = [
-        {"doc_id": doc_id, "filename": filename, "chunk_index": i}
+        {"doc_id": doc_id, "filename": filename, "chunk_index": i, "owner_id": owner_id}
         for i in range(len(chunks))
     ]
 
     collection.add(ids=ids, documents=chunks, metadatas=metadatas)
 
 
-def query_chunks(query: str, n_results: int = 4, doc_id: str | None = None) -> list[dict]:
+def query_chunks(query: str, owner_id: str, n_results: int = 4, doc_id: str | None = None) -> list[dict]:
     """
-    Find the chunks whose meaning is closest to the query. This is what
-    the chat endpoint will call in the next step - given a customer's
-    question, get back the most relevant chunks to answer it from.
+    Find the chunks whose meaning is closest to the query, scoped to one
+    business's documents only - this is the multi-tenancy boundary.
     """
     collection = get_collection()
-    where_filter = {"doc_id": doc_id} if doc_id else None
+
+    conditions = [{"owner_id": owner_id}]
+    if doc_id:
+        conditions.append({"doc_id": doc_id})
+    where_filter = conditions[0] if len(conditions) == 1 else {"$and": conditions}
 
     results = collection.query(
         query_texts=[query],
