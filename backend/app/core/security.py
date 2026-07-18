@@ -12,6 +12,7 @@ token instead of their password, and we verify its signature to confirm
 it's genuinely one we issued and hasn't been tampered with.
 """
 from datetime import datetime, timedelta, timezone
+import uuid
 
 import bcrypt
 from fastapi import Depends, HTTPException, status
@@ -66,6 +67,13 @@ def get_current_user(
     """
     user_id = decode_access_token(credentials.credentials)
     if user_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired authentication token",
+        )
+         try:
+        user_uuid = uuid.UUID(user_id)
+    except ValueError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired authentication token",

@@ -13,7 +13,7 @@ from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.security import hash_password, verify_password, create_access_token
+from app.core.security import hash_password, verify_password, create_access_token, get_current_user
 from app.models.user import User
 
 router = APIRouter()
@@ -76,3 +76,22 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
 
     token = create_access_token(user_id=str(user.id))
     return AuthResponse(access_token=token)
+
+    class MeResponse(BaseModel):
+    id: str
+    email: str
+    business_name: str | None = None
+
+
+@router.get("/auth/me", response_model=MeResponse)
+def get_me(current_user: User = Depends(get_current_user)):
+    """
+    Lets the frontend ask "who am I?" using just the token - no need to
+    re-send a password. Used to show the logged-in business's name/email
+    in the dashboard, and to get their id for things like the embed code.
+    """
+    return MeResponse(
+        id=str(current_user.id),
+        email=current_user.email,
+        business_name=current_user.business_name,
+    )
