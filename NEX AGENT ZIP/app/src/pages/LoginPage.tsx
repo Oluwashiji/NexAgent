@@ -2,12 +2,16 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Quote } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
+import { ApiError } from '@/lib/api'
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const { login } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const validate = () => {
     const newErrors: Record<string, string> = {}
@@ -19,10 +23,19 @@ export default function LoginPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (validate()) {
+    if (!validate()) return
+
+    setIsSubmitting(true)
+    try {
+      await login(email, password)
       navigate('/dashboard')
+    } catch (err) {
+      const message = err instanceof ApiError ? err.message : 'Something went wrong. Please try again.'
+      setErrors({ form: message })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -96,6 +109,16 @@ export default function LoginPage() {
           </motion.div>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+            {errors.form && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-[10px] border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+              >
+                {errors.form}
+              </motion.div>
+            )}
+
             {/* Email */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -147,9 +170,10 @@ export default function LoginPage() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.35 }}
               type="submit"
-              className="w-full py-3 text-sm font-semibold text-white rounded-[10px] gradient-primary shadow-[0_2px_12px_rgba(4,120,87,0.3)] hover:shadow-[0_4px_20px_rgba(4,120,87,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer"
+              disabled={isSubmitting}
+              className="w-full py-3 text-sm font-semibold text-white rounded-[10px] gradient-primary shadow-[0_2px_12px_rgba(4,120,87,0.3)] hover:shadow-[0_4px_20px_rgba(4,120,87,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
             >
-              Sign in
+              {isSubmitting ? 'Signing in...' : 'Sign in'}
             </motion.button>
           </form>
 

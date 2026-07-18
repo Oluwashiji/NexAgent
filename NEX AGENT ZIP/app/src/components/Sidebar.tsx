@@ -11,6 +11,7 @@ import {
   Menu,
   X,
 } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
 
 const NAV_ITEMS = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
@@ -28,6 +29,7 @@ interface SidebarProps {
 export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const navigate = useNavigate()
+  const { logout } = useAuth()
 
   const handleNavClick = (tabId: string) => {
     onTabChange(tabId)
@@ -35,9 +37,9 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   }
 
   const handleLogout = () => {
+    logout()
     navigate('/login')
   }
-
   const SidebarContent = () => (
     <>
       {/* Header */}

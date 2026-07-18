@@ -2,15 +2,19 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Quote } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
+import { ApiError } from '@/lib/api'
 
 export default function SignupPage() {
   const navigate = useNavigate()
+  const { signup } = useAuth()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [agreed, setAgreed] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const getPasswordStrength = (pwd: string) => {
     let score = 0
@@ -35,10 +39,19 @@ export default function SignupPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (validate()) {
+    if (!validate()) return
+
+    setIsSubmitting(true)
+    try {
+      await signup(email, password, name)
       navigate('/dashboard')
+    } catch (err) {
+      const message = err instanceof ApiError ? err.message : 'Something went wrong. Please try again.'
+      setErrors({ form: message })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -105,6 +118,16 @@ export default function SignupPage() {
           </motion.div>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+            {errors.form && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-[10px] border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+              >
+                {errors.form}
+              </motion.div>
+            )}
+
             {/* Name */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>
               <label className="block text-sm font-medium text-slate-400 mb-2">Full name</label>
@@ -172,12 +195,13 @@ export default function SignupPage() {
             </motion.div>
 
             {/* Terms Checkbox */}
+            {/* Terms Checkbox */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45 }} className="flex items-start gap-3">
               <button
                 type="button"
                 onClick={() => { setAgreed(!agreed); setErrors(prev => ({ ...prev, agreed: '' })) }}
                 className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 transition-colors cursor-pointer ${
-                  agreed ? 'bg-brand-blue border-brand-blue' : 'border-white/20'
+                  agreed ? 'bg-brand-blue border-brand-blue' : 'border-slate-300'
                 }`}
               >
                 {agreed && (
@@ -188,9 +212,9 @@ export default function SignupPage() {
               </button>
               <p className="text-sm text-slate-400">
                 I agree to the{' '}
-                <span className="text-brand-blue hover:underline cursor-pointer">Terms of Service</span>
+                <Link to="/terms" target="_blank" className="text-brand-blue hover:underline">Terms of Service</Link>
                 {' '}and{' '}
-                <span className="text-brand-blue hover:underline cursor-pointer">Privacy Policy</span>
+                <Link to="/privacy" target="_blank" className="text-brand-blue hover:underline">Privacy Policy</Link>
               </p>
             </motion.div>
             {errors.agreed && <p className="text-xs text-red-400 -mt-3">{errors.agreed}</p>}
@@ -201,9 +225,10 @@ export default function SignupPage() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
               type="submit"
-              className="w-full py-3 text-sm font-semibold text-white rounded-[10px] gradient-primary shadow-[0_2px_12px_rgba(4,120,87,0.3)] hover:shadow-[0_4px_20px_rgba(4,120,87,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer"
+              disabled={isSubmitting}
+              className="w-full py-3 text-sm font-semibold text-white rounded-[10px] gradient-primary shadow-[0_2px_12px_rgba(4,120,87,0.3)] hover:shadow-[0_4px_20px_rgba(4,120,87,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
             >
-              Create account
+              {isSubmitting ? 'Creating account...' : 'Create account'}
             </motion.button>
           </form>
 
