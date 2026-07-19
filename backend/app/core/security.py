@@ -71,7 +71,8 @@ def get_current_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired authentication token",
         )
-         try:
+
+    try:
         user_uuid = uuid.UUID(user_id)
     except ValueError:
         raise HTTPException(
@@ -79,7 +80,7 @@ def get_current_user(
             detail="Invalid or expired authentication token",
         )
 
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(User).filter(User.id == user_uuid).first()
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

@@ -77,7 +77,8 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
     token = create_access_token(user_id=str(user.id))
     return AuthResponse(access_token=token)
 
-    class MeResponse(BaseModel):
+
+class MeResponse(BaseModel):
     id: str
     email: str
     business_name: str | None = None
