@@ -87,22 +87,13 @@ export default function HeroSection() {
             transition={{ duration: 0.7, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="flex justify-center lg:justify-end"
           >
-            <div
-              className="relative w-full max-w-[420px] h-[480px] rounded-3xl overflow-hidden shadow-2xl"
-              style={{
-                background: 'linear-gradient(135deg, #C9A227 0%, #0F6B4C 50%, #C8A878 100%)',
-                backgroundSize: '200% 200%',
-                animation: 'gradient-shift 8s ease infinite',
-              }}
-            >
-              <style>{`
-                @keyframes gradient-shift {
-                  0% { background-position: 0% 50%; }
-                  50% { background-position: 100% 50%; }
-                  100% { background-position: 0% 50%; }
-                }
-              `}</style>
-              <div className="absolute inset-0 bg-black/10" />
+           <div className="relative w-full max-w-[420px] h-[480px] rounded-3xl overflow-hidden shadow-2xl">
+              <img
+                src="/hero-image.jpg"
+                alt="Business owner using NexAgent"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
             </div>
           </motion.div>
         </div>
