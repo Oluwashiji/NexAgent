@@ -75,7 +75,7 @@ export default function SettingsTab() {
               />
             </div>
           </div>
-          <button className="mt-6 px-5 py-2.5 text-sm font-semibold text-white rounded-[10px] gradient-primary shadow-[0_2px_12px_rgba(59,130,246,0.3)] hover:shadow-[0_4px_20px_rgba(59,130,246,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer">
+          <button className="mt-6 px-5 py-2.5 text-sm font-semibold text-white rounded-[10px] gradient-primary shadow-[0_2px_12px_rgba(4,120,87,0.3)] hover:shadow-[0_4px_20px_rgba(4,120,87,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer">
             Save Changes
           </button>
         </GlassCard>
@@ -120,7 +120,7 @@ export default function SettingsTab() {
               </select>
             </div>
           </div>
-          <button className="mt-6 px-5 py-2.5 text-sm font-semibold text-white rounded-[10px] gradient-primary shadow-[0_2px_12px_rgba(59,130,246,0.3)] hover:shadow-[0_4px_20px_rgba(59,130,246,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer">
+          <button className="mt-6 px-5 py-2.5 text-sm font-semibold text-white rounded-[10px] gradient-primary shadow-[0_2px_12px_rgba(4,120,87,0.3)] hover:shadow-[0_4px_20px_rgba(4,120,87,0.4)] hover:-translate-y-0.5 transition-all cursor-pointer">
             Save Defaults
           </button>
         </GlassCard>

@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Play, CreditCard, Gift, Clock } from 'lucide-react'
-import ChatWidget from '@/components/ChatWidget'
 import AmbientGlow from '@/components/AmbientGlow'
 
 export default function HeroSection() {
@@ -15,17 +14,6 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-[55%_45%] gap-12 lg:gap-8 items-center">
           {/* Left: Text Content */}
           <div className="text-center lg:text-left">
-            {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-blue/10 border border-brand-blue/20 mb-6"
-            >
-              <span className="w-2 h-2 rounded-full bg-brand-blue animate-pulse" />
-              <span className="text-xs font-medium text-brand-blue">AI-Powered Customer Support</span>
-            </motion.div>
-
             {/* Headline */}
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
@@ -56,7 +44,7 @@ export default function HeroSection() {
             >
               <Link
                 to="/signup"
-                className="px-7 py-3.5 text-sm font-semibold text-white rounded-[10px] gradient-primary shadow-[0_2px_12px_rgba(59,130,246,0.3)] hover:shadow-[0_4px_20px_rgba(59,130,246,0.4)] hover:-translate-y-0.5 transition-all"
+                className="px-7 py-3.5 text-sm font-semibold text-white rounded-[10px] gradient-primary shadow-[0_2px_12px_rgba(4,120,87,0.3)] hover:shadow-[0_4px_20px_rgba(4,120,87,0.4)] hover:-translate-y-0.5 transition-all"
               >
                 Start for Free
               </Link>
@@ -74,9 +62,9 @@ export default function HeroSection() {
               className="mt-12 flex flex-wrap items-center justify-center lg:justify-start gap-6 sm:gap-8"
             >
               {[
-                { icon: CreditCard, text: 'No credit card' },
-                { icon: Gift, text: 'Free forever plan' },
-                { icon: Clock, text: 'Setup in 2 min' },
+                { icon: CreditCard, text: 'No credit card required' },
+                { icon: Gift, text: 'Free plan, no time limit' },
+                { icon: Clock, text: 'Live in under 2 minutes' },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex items-center gap-2 text-slate-500">
                   <Icon className="w-3.5 h-3.5" />
@@ -86,20 +74,35 @@ export default function HeroSection() {
             </motion.div>
           </div>
 
-          {/* Right: Chat Preview */}
+          {/* Right: Ambient Background Panel */}
+          {/* Placeholder animated gradient for now. To use a real video instead,
+              replace the inner <div> below with:
+              <video autoPlay loop muted playsInline className="w-full h-full object-cover">
+                <source src="/hero-video.mp4" type="video/mp4" />
+              </video>
+              and drop the video file into the /public folder. */}
           <motion.div
             initial={{ opacity: 0, x: 30, scale: 0.95 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="flex justify-center lg:justify-end"
           >
-            <div className="relative">
-              {/* Preview Label */}
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 px-3 py-1 rounded-full bg-navy-800 border border-white/10">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[10px] text-slate-400 font-medium">Live Preview</span>
-              </div>
-              <ChatWidget inline className="w-full max-w-[380px] h-[520px]" />
+            <div
+              className="relative w-full max-w-[420px] h-[480px] rounded-3xl overflow-hidden shadow-2xl"
+              style={{
+                background: 'linear-gradient(135deg, #C9A227 0%, #0F6B4C 50%, #C8A878 100%)',
+                backgroundSize: '200% 200%',
+                animation: 'gradient-shift 8s ease infinite',
+              }}
+            >
+              <style>{`
+                @keyframes gradient-shift {
+                  0% { background-position: 0% 50%; }
+                  50% { background-position: 100% 50%; }
+                  100% { background-position: 0% 50%; }
+                }
+              `}</style>
+              <div className="absolute inset-0 bg-black/10" />
             </div>
           </motion.div>
         </div>

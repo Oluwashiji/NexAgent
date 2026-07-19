@@ -113,7 +113,7 @@ export default function PricingSection() {
                   to="/signup"
                   className={`block w-full text-center py-3 rounded-[10px] text-sm font-semibold transition-all ${
                     plan.ctaStyle === 'primary'
-                      ? 'gradient-primary text-white shadow-[0_2px_12px_rgba(59,130,246,0.3)] hover:shadow-[0_4px_20px_rgba(59,130,246,0.4)] hover:-translate-y-0.5'
+                      ? 'gradient-primary text-white shadow-[0_2px_12px_rgba(4,120,87,0.3)] hover:shadow-[0_4px_20px_rgba(4,120,87,0.4)] hover:-translate-y-0.5'
                       : 'border border-white/10 text-slate-50 hover:border-white/20 hover:bg-white/5'
                   }`}
                 >

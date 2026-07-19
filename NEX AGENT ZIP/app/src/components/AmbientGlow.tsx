@@ -6,9 +6,9 @@ interface AmbientGlowProps {
 
 export default function AmbientGlow({ color = 'blue', className = '', size = 500 }: AmbientGlowProps) {
   const colorMap = {
-    blue: 'rgba(59,130,246,0.15)',
-    violet: 'rgba(139,92,246,0.12)',
-    cyan: 'rgba(6,182,212,0.10)',
+    blue: 'rgba(4,120,87,0.15)',
+    violet: 'rgba(212,175,55,0.12)',
+    cyan: 'rgba(169,120,79,0.10)',
   }
 
   return (
