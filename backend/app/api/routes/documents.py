@@ -13,7 +13,7 @@ from app.models.user import User
 from app.models.document import Document
 from app.services.document_processor import extract_text, UnsupportedFileType
 from app.services.chunker import chunk_text
-from app.services.vector_store import add_chunks, query_chunks
+from app.services.vector_store import add_chunks, query_chunks, delete_document_chunks
 
 router = APIRouter()
 
@@ -130,3 +130,34 @@ def search_documents(
 ):
     matches = query_chunks(query=query, n_results=n_results, doc_id=doc_id, owner_id=str(current_user.id))
     return {"query": query, "matches": matches}
+
+    @router.delete("/documents/{doc_id}")
+def delete_document(
+    doc_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Fully removes a document: the database record, its chunks in
+    ChromaDB, and the files on disk. Only the business that uploaded it
+    can delete it - enforced by filtering on both doc_id and user_id.
+    """
+    document = (
+        db.query(Document)
+        .filter(Document.id == doc_id, Document.user_id == current_user.id)
+        .first()
+    )
+    if document is None:
+        raise HTTPException(status_code=404, detail="Document not found.")
+
+    delete_document_chunks(doc_id=doc_id, owner_id=str(current_user.id))
+
+    upload_dir = Path(settings.UPLOAD_DIR)
+    for pattern in [f"{doc_id}.*", f"{doc_id}"]:
+        for f in upload_dir.glob(pattern):
+            f.unlink(missing_ok=True)
+
+    db.delete(document)
+    db.commit()
+
+    return {"doc_id": doc_id, "status": "deleted"}
