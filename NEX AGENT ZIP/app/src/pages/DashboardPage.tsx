@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Sidebar from '@/components/Sidebar'
+import ChatWidget from '@/components/ChatWidget'
+import { useAuth } from '@/contexts/AuthContext'
 import OverviewTab from '@/sections/dashboard/OverviewTab'
 import UploadTab from '@/sections/dashboard/UploadTab'
 import AgentsTab from '@/sections/dashboard/AgentsTab'
@@ -17,6 +19,7 @@ const TABS: Record<string, React.ComponentType> = {
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('overview')
+  const { user } = useAuth()
 
   const ActiveComponent = TABS[activeTab] || OverviewTab
 
@@ -45,6 +48,9 @@ export default function DashboardPage() {
           </AnimatePresence>
         </div>
       </main>
+
+      {/* Lets a business test their own real chatbot right from the dashboard */}
+      {user && <ChatWidget businessId={user.id} greeting="Hi! Ask me anything about the documents you've uploaded." />}
     </div>
   )
 }

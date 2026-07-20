@@ -16,7 +16,7 @@ import { useAuth } from '@/contexts/AuthContext'
 const NAV_ITEMS = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
   { id: 'upload', label: 'Upload', icon: Upload },
-  { id: 'agents', label: 'My Agents', icon: Bot },
+  { id: 'agents', label: 'My Documents', icon: Bot },
   { id: 'analytics', label: 'Analytics', icon: BarChart3 },
   { id: 'settings', label: 'Settings', icon: Settings },
 ]
@@ -29,7 +29,7 @@ interface SidebarProps {
 export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const navigate = useNavigate()
-  const { logout } = useAuth()
+  const { logout, user } = useAuth()
 
   const handleNavClick = (tabId: string) => {
     onTabChange(tabId)
@@ -73,13 +73,13 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
 
       {/* Footer */}
       <div className="mt-auto px-3 pt-6 border-t border-white/10">
-        <div className="flex items-center gap-3 px-4 py-3 mb-2">
+       <div className="flex items-center gap-3 px-4 py-3 mb-2">
           <div className="w-9 h-9 rounded-full gradient-primary flex items-center justify-center text-white text-sm font-semibold">
-            JD
+            {(user?.business_name || user?.email || '?').charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-slate-50 truncate">John Doe</p>
-            <p className="text-xs text-slate-500">Pro Plan</p>
+            <p className="text-sm font-medium text-slate-50 truncate">{user?.business_name || user?.email || 'Loading...'}</p>
+            <p className="text-xs text-slate-500">Free Plan</p>
           </div>
         </div>
         <button

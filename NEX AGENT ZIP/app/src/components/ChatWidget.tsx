@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageCircle, X, Minus, Send, Bot, User } from 'lucide-react'
+import * as api from '@/lib/api'
 
 interface Message {
   id: string
@@ -9,24 +10,29 @@ interface Message {
   timestamp: string
 }
 
-const DEMO_MESSAGES: Message[] = [
-  { id: '1', text: 'Hi there! Welcome to NexAgent. How can I help you today?', sender: 'bot', timestamp: '2:30 PM' },
-  { id: '2', text: 'What are your pricing plans?', sender: 'user', timestamp: '2:31 PM' },
-  { id: '3', text: 'We offer three plans: **Free** ($0/month for 1 agent), **Pro** ($29/month for 5 agents with unlimited conversations), and **Enterprise** (custom pricing). Would you like me to explain any plan in detail?', sender: 'bot', timestamp: '2:31 PM' },
-  { id: '4', text: 'How fast can I set this up?', sender: 'user', timestamp: '2:32 PM' },
-  { id: '5', text: 'Most users have their first AI agent live in under 2 minutes! Just upload your documents, configure a few settings, and paste the embed code on your website. No coding experience required.', sender: 'bot', timestamp: '2:32 PM' },
-]
+const QUICK_REPLIES = ['What do you offer?', 'How does this work?', 'Pricing?']
 
-const QUICK_REPLIES = ['Pricing', 'Features', 'Support hours', 'Contact sales']
+function now() {
+  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+}
 
 interface ChatWidgetProps {
   inline?: boolean
   className?: string
+  businessId?: string
+  greeting?: string
 }
 
-export default function ChatWidget({ inline = false, className = '' }: ChatWidgetProps) {
+export default function ChatWidget({ inline = false, className = '', businessId, greeting }: ChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(inline)
-  const [messages, setMessages] = useState<Message[]>(DEMO_MESSAGES)
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: 'greeting',
+      text: greeting || "Hi there! Ask me anything about this business.",
+      sender: 'bot',
+      timestamp: now(),
+    },
+  ])
   const [inputValue, setInputValue] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -39,28 +45,49 @@ export default function ChatWidget({ inline = false, className = '' }: ChatWidge
     scrollToBottom()
   }, [messages, isTyping])
 
-  const handleSend = (text: string) => {
+  const handleSend = async (text: string) => {
     if (!text.trim()) return
-    const newMessage: Message = {
+
+    const userMessage: Message = {
       id: Date.now().toString(),
       text,
       sender: 'user',
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      timestamp: now(),
     }
-    setMessages(prev => [...prev, newMessage])
+    setMessages((prev) => [...prev, userMessage])
     setInputValue('')
-    setIsTyping(true)
 
-    setTimeout(() => {
+    if (!businessId) {
+      // No live business context (e.g. viewed outside a real account) -
+      // be honest rather than fake a response.
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          text: "This preview isn't connected to a live business account yet.",
+          sender: 'bot',
+          timestamp: now(),
+        },
+      ])
+      return
+    }
+
+    setIsTyping(true)
+    try {
+      const result = await api.chatQuery(businessId, text)
+      setMessages((prev) => [
+        ...prev,
+        { id: (Date.now() + 1).toString(), text: result.answer, sender: 'bot', timestamp: now() },
+      ])
+    } catch (err) {
+      const message = err instanceof api.ApiError ? err.message : "Something went wrong reaching the chatbot."
+      setMessages((prev) => [
+        ...prev,
+        { id: (Date.now() + 1).toString(), text: message, sender: 'bot', timestamp: now() },
+      ])
+    } finally {
       setIsTyping(false)
-      const botReply: Message = {
-        id: (Date.now() + 1).toString(),
-        text: "That's a great question! Our AI agents are trained specifically on your content, so every answer is accurate and relevant to your business. Would you like to see how it works?",
-        sender: 'bot',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      }
-      setMessages(prev => [...prev, botReply])
-    }, 1500)
+    }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -175,12 +202,12 @@ function ChatWindow({ messages, isTyping, inputValue, setInputValue, handleSubmi
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-white">
         <AnimatePresence>
-          {messages.map((msg, i) => (
+          {messages.map((msg) => (
             <motion.div
               key={msg.id}
               initial={{ opacity: 0, x: msg.sender === 'bot' ? -10 : 10 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: i < 5 ? 0 : 0 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className={`flex gap-2 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
             >
               {msg.sender === 'bot' && (

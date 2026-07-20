@@ -98,6 +98,14 @@ export async function listDocuments() {
   return handleResponse(res)
 }
 
+export async function deleteDocument(docId: string) {
+  const res = await fetch(`${API_URL}/api/documents/${docId}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  })
+  return handleResponse(res)
+}
+
 export async function chatQuery(businessId: string, query: string, docId?: string) {
   const res = await fetch(`${API_URL}/api/chat`, {
     method: 'POST',

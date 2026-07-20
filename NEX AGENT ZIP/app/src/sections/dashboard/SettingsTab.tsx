@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import GlassCard from '@/components/GlassCard'
 import AnimatedSection from '@/components/AnimatedSection'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface ToggleProps {
   checked: boolean
@@ -26,7 +27,8 @@ function Toggle({ checked, onChange }: ToggleProps) {
 }
 
 export default function SettingsTab() {
-  const [name, setName] = useState('John Doe')
+  const { user } = useAuth()
+  const [name, setName] = useState(user?.business_name || '')
   const [greeting, setGreeting] = useState('Hello! How can I help you today?')
   const [fallback, setFallback] = useState("I'm not sure about that. Let me connect you with a human agent.")
   const [language, setLanguage] = useState('en')
