@@ -82,7 +82,8 @@ def query_chunks(query: str, owner_id: str, n_results: int = 4, doc_id: str | No
 
     return matches
 
-    def delete_document_chunks(doc_id: str, owner_id: str) -> None:
+
+def delete_document_chunks(doc_id: str, owner_id: str) -> None:
     """
     Remove every chunk belonging to one document from the vector store.
     Scoped to owner_id too, so a business can never delete chunks that

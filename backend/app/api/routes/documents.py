@@ -131,7 +131,8 @@ def search_documents(
     matches = query_chunks(query=query, n_results=n_results, doc_id=doc_id, owner_id=str(current_user.id))
     return {"query": query, "matches": matches}
 
-    @router.delete("/documents/{doc_id}")
+
+@router.delete("/documents/{doc_id}")
 def delete_document(
     doc_id: str,
     current_user: User = Depends(get_current_user),
