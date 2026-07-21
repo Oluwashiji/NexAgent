@@ -40,18 +40,26 @@ def get_collection():
 
 
 def add_chunks(doc_id: str, filename: str, chunks: list[str], owner_id: str) -> None:
-    """Embed and store every chunk from one document, tagged to its owner."""
+    """
+    Embed and store every chunk from one document, tagged to its owner.
+    Processed in small batches rather than all at once - embedding many
+    chunks in a single call spikes memory, which matters a lot on a
+    memory-constrained server.
+    """
     if not chunks:
         return
 
     collection = get_collection()
-    ids = [f"{doc_id}_chunk_{i}" for i in range(len(chunks))]
-    metadatas = [
-        {"doc_id": doc_id, "filename": filename, "chunk_index": i, "owner_id": owner_id}
-        for i in range(len(chunks))
-    ]
+    batch_size = 16
 
-    collection.add(ids=ids, documents=chunks, metadatas=metadatas)
+    for start in range(0, len(chunks), batch_size):
+        batch = chunks[start : start + batch_size]
+        ids = [f"{doc_id}_chunk_{start + i}" for i in range(len(batch))]
+        metadatas = [
+            {"doc_id": doc_id, "filename": filename, "chunk_index": start + i, "owner_id": owner_id}
+            for i in range(len(batch))
+        ]
+        collection.add(ids=ids, documents=batch, metadatas=metadatas)
 
 
 def query_chunks(query: str, owner_id: str, n_results: int = 4, doc_id: str | None = None) -> list[dict]:
