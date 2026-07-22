@@ -36,6 +36,7 @@ export default function ChatWidget({ inline = false, className = '', businessId,
   const [inputValue, setInputValue] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const widgetRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -44,6 +45,29 @@ export default function ChatWidget({ inline = false, className = '', businessId,
   useEffect(() => {
     scrollToBottom()
   }, [messages, isTyping])
+
+  // Two easy ways to close the widget, on top of the X button: Escape key,
+  // and clicking anywhere outside it. Only applies to the floating widget,
+  // not the inline preview (which has no concept of "closed").
+  useEffect(() => {
+    if (inline || !isOpen) return
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') setIsOpen(false)
+    }
+    function handleClickOutside(e: MouseEvent) {
+      if (widgetRef.current && !widgetRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen, inline])
 
   const handleSend = async (text: string) => {
     if (!text.trim()) return
@@ -122,8 +146,9 @@ export default function ChatWidget({ inline = false, className = '', businessId,
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-4 bg-navy-800 rounded-3xl border border-white/10 overflow-hidden shadow-dropdown"
+            className="mb-4 bg-navy-800 rounded-3xl border border-white/10 overflow-hidden shadow-dropdown flex flex-col"
             style={{ width: 380, height: 520 }}
+            ref={widgetRef}
           >
             <ChatWindow
               messages={messages}
