@@ -146,9 +146,9 @@ export default function ChatWidget({ inline = false, className = '', businessId,
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-4 bg-navy-800 rounded-3xl border border-white/10 overflow-hidden shadow-dropdown flex flex-col"
-            style={{ width: 380, height: 520 }}
+            className="mb-4 w-[calc(100vw-3rem)] max-w-[380px] h-[70vh] max-h-[520px] sm:w-[380px] sm:h-[520px] bg-navy-800 rounded-3xl border border-white/10 overflow-hidden shadow-dropdown flex flex-col"
             ref={widgetRef}
+            
           >
             <ChatWindow
               messages={messages}
