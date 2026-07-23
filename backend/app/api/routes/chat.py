@@ -4,9 +4,11 @@ by design. `business_id` (the owner's user UUID) is the public routing
 key embedded in the widget snippet that tells us whose documents to
 search. It's not a secret; it just scopes retrieval.
 """
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
+from app.core.database import get_db
 from app.services.vector_store import query_chunks
 from app.services.llm_service import generate_answer
 
@@ -26,8 +28,9 @@ class ChatResponse(BaseModel):
 
 
 @router.post("/chat", response_model=ChatResponse)
-def chat(request: ChatRequest):
+def chat(request: ChatRequest, db: Session = Depends(get_db)):
     matches = query_chunks(
+        db=db,
         query=request.query,
         n_results=request.n_results,
         doc_id=request.doc_id,

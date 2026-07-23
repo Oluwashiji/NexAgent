@@ -12,8 +12,11 @@ langchain==0.3.13
 langchain-community==0.3.13
 langchain-text-splitters==0.3.4
 
-# Embeddings + vector store
+# Embeddings (chromadb used only for its lightweight embedding function -
+# actual vector storage now lives in Postgres via pgvector, not chromadb's
+# own database, since that needs persistent disk we don't have on our tier)
 chromadb==1.5.9
+pgvector==0.3.6
 
 
 # LLM

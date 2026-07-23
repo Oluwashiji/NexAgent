@@ -64,9 +64,9 @@ async def upload_document(
     chunks_path = upload_dir / f"{doc_id}.chunks.json"
     chunks_path.write_text(json.dumps(chunks, indent=2), encoding="utf-8")
 
-    add_chunks(doc_id=doc_id, filename=file.filename, chunks=chunks, owner_id=str(current_user.id))
-
-    # This is the row that makes the document actually belong to someone
+    # This is the row that makes the document actually belong to someone -
+    # must be created and committed before chunks, since each chunk has a
+    # foreign key pointing back to this document's id.
     document = Document(
         id=doc_id,
         user_id=current_user.id,
@@ -76,6 +76,8 @@ async def upload_document(
     )
     db.add(document)
     db.commit()
+
+    add_chunks(db=db, doc_id=doc_id, filename=file.filename, chunks=chunks, owner_id=str(current_user.id))
 
     metadata = {
         "doc_id": doc_id,
@@ -127,8 +129,9 @@ def search_documents(
     doc_id: str | None = None,
     n_results: int = 4,
     current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
-    matches = query_chunks(query=query, n_results=n_results, doc_id=doc_id, owner_id=str(current_user.id))
+    matches = query_chunks(db=db, query=query, n_results=n_results, doc_id=doc_id, owner_id=str(current_user.id))
     return {"query": query, "matches": matches}
 
 
@@ -140,7 +143,7 @@ def delete_document(
 ):
     """
     Fully removes a document: the database record, its chunks in
-    ChromaDB, and the files on disk. Only the business that uploaded it
+    Postgres, and the files on disk. Only the business that uploaded it
     can delete it - enforced by filtering on both doc_id and user_id.
     """
     document = (
@@ -151,7 +154,7 @@ def delete_document(
     if document is None:
         raise HTTPException(status_code=404, detail="Document not found.")
 
-    delete_document_chunks(doc_id=doc_id, owner_id=str(current_user.id))
+    delete_document_chunks(db=db, doc_id=doc_id, owner_id=str(current_user.id))
 
     upload_dir = Path(settings.UPLOAD_DIR)
     for pattern in [f"{doc_id}.*", f"{doc_id}"]:

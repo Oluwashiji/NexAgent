@@ -9,13 +9,21 @@ into a 1000-line mess.
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 
 from app.core.config import settings
 from app.core.database import Base, engine
-from app.models import user, document  # noqa: F401 - imported so their tables get registered
+from app.models import user, document, chunk  # noqa: F401 - imported so their tables get registered
 from app.api.routes import health, documents, chat, auth
 
 app = FastAPI(title="NexAgent API", version="0.1.0")
+
+# pgvector needs its Postgres extension enabled once before we can create
+# a table with a Vector column - safe to run every startup, does nothing
+# if it's already enabled.
+with engine.connect() as conn:
+    conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+    conn.commit()
 
 # Creates any tables that don't exist yet in the database. Safe to run every
 # startup - it does nothing if the tables are already there. Fine for now;
