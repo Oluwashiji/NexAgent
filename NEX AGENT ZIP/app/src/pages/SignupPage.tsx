@@ -135,7 +135,7 @@ export default function SignupPage() {
                 type="text"
                 value={name}
                 onChange={(e) => { setName(e.target.value); setErrors(prev => ({ ...prev, name: '' })) }}
-                placeholder="John Smith"
+                placeholder="Your full name here"
                 className={`w-full bg-navy-700 border ${errors.name ? 'border-red-500' : 'border-white/10'} rounded-[10px] px-4 py-3 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all`}
               />
               {errors.name && <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="mt-1 text-xs text-red-400">{errors.name}</motion.p>}
