@@ -42,7 +42,7 @@
   html {
     scroll-behavior: smooth;
   }
-  html {
+ html {
     overflow-x: hidden;
   }
 
@@ -51,6 +51,23 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
     max-width: 100vw;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Prevent images from being accidentally grabbed and dragged around,
+     which reads exactly like "everything can be tossed around" on touch
+     devices - browsers make images draggable by default. */
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+
+  /* Any scrollable panel (chat messages, dropdowns, mobile drawers) gets
+     smooth native momentum scrolling on iOS instead of feeling stuttery. */
+  .overflow-y-auto,
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
   }
 }
 
