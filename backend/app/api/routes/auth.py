@@ -2,7 +2,9 @@
 Auth endpoints: signup and login.
 
 Signup: create a new business account, with the password hashed before
-it ever touches the database.
+it ever touches the database. New accounts start as `is_approved=False`
+and stay invisible in the public business directory until manually
+approved - see businesses.py for how that's enforced.
 
 Login: check the submitted password against the stored hash. If it
 matches, issue a JWT token - the "wristband" the frontend will attach
@@ -22,7 +24,8 @@ router = APIRouter()
 class SignupRequest(BaseModel):
     email: EmailStr
     password: str
-    business_name: str | None = None
+    full_name: str
+    business_name: str
 
 
 class LoginRequest(BaseModel):
@@ -47,7 +50,9 @@ def signup(request: SignupRequest, db: Session = Depends(get_db)):
     new_user = User(
         email=request.email,
         hashed_password=hash_password(request.password),
+        full_name=request.full_name,
         business_name=request.business_name,
+        is_approved=False,
     )
     db.add(new_user)
     db.commit()
@@ -81,7 +86,9 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
 class MeResponse(BaseModel):
     id: str
     email: str
+    full_name: str | None = None
     business_name: str | None = None
+    is_approved: bool = False
 
 
 @router.get("/auth/me", response_model=MeResponse)
@@ -94,5 +101,7 @@ def get_me(current_user: User = Depends(get_current_user)):
     return MeResponse(
         id=str(current_user.id),
         email=current_user.email,
+        full_name=current_user.full_name,
         business_name=current_user.business_name,
+        is_approved=current_user.is_approved,
     )
