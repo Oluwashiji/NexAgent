@@ -85,7 +85,7 @@ export default function SignupPage() {
           <p className="text-lg text-slate-50 italic leading-relaxed">
             "We set up our AI support agent in under 2 minutes. Now our customers get instant answers 24/7."
           </p>
-          <p className="mt-4 text-sm text-slate-400">— Michael Okafor, Founder of AfriTrade</p>
+          <p className="mt-4 text-sm text-slate-400">~ Michael Okafor, Founder of AfriTrade</p>
         </div>
 
         <p className="relative z-10 text-sm text-slate-500">
