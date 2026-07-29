@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageCircle, X, Minus, Send, Bot, User } from 'lucide-react'
+import { MessageCircle, X, Minus, Send, Bot, User, Search } from 'lucide-react'
 import * as api from '@/lib/api'
 
 interface Message {
@@ -25,6 +25,19 @@ interface ChatWidgetProps {
 
 export default function ChatWidget({ inline = false, className = '', businessId, greeting }: ChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(inline)
+
+  // If a businessId prop is passed in (e.g. the dashboard's "test your
+  // own docs" widget), we're already scoped - no picker needed. If not
+  // (the public landing-page widget), the visitor has to tell us which
+  // business they mean first.
+  const [pickedBusinessId, setPickedBusinessId] = useState<string | null>(null)
+  const [pickedBusinessName, setPickedBusinessName] = useState<string | null>(null)
+  const needsPicker = !businessId && !pickedBusinessId
+  const effectiveBusinessId = businessId || pickedBusinessId || undefined
+
+  const [pickerInput, setPickerInput] = useState('')
+  const [pickerStatus, setPickerStatus] = useState<'idle' | 'loading' | 'not_found'>('idle')
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'greeting',
@@ -69,6 +82,33 @@ export default function ChatWidget({ inline = false, className = '', businessId,
     }
   }, [isOpen, inline])
 
+  const handlePickerSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!pickerInput.trim()) return
+
+    setPickerStatus('loading')
+    try {
+      const business = await api.lookupBusiness(pickerInput.trim())
+      setPickedBusinessId(business.id)
+      setPickedBusinessName(business.business_name)
+      setPickerStatus('idle')
+      setMessages([
+        {
+          id: 'greeting',
+          text: `Hi there! Ask me anything about ${business.business_name}.`,
+          sender: 'bot',
+          timestamp: now(),
+        },
+      ])
+    } catch {
+      // Covers both a genuine 404 (name doesn't match any approved
+      // business) and an unapproved account with a matching name -
+      // the backend deliberately returns the same 404 for both, so we
+      // don't leak which unapproved accounts exist.
+      setPickerStatus('not_found')
+    }
+  }
+
   const handleSend = async (text: string) => {
     if (!text.trim()) return
 
@@ -81,7 +121,7 @@ export default function ChatWidget({ inline = false, className = '', businessId,
     setMessages((prev) => [...prev, userMessage])
     setInputValue('')
 
-    if (!businessId) {
+    if (!effectiveBusinessId) {
       // No live business context (e.g. viewed outside a real account) -
       // be honest rather than fake a response.
       setMessages((prev) => [
@@ -98,7 +138,7 @@ export default function ChatWidget({ inline = false, className = '', businessId,
 
     setIsTyping(true)
     try {
-      const result = await api.chatQuery(businessId, text)
+      const result = await api.chatQuery(effectiveBusinessId, text)
       setMessages((prev) => [
         ...prev,
         { id: (Date.now() + 1).toString(), text: result.answer, sender: 'bot', timestamp: now() },
@@ -122,17 +162,29 @@ export default function ChatWidget({ inline = false, className = '', businessId,
   if (inline) {
     return (
       <div className={`bg-navy-800 rounded-3xl border border-white/10 overflow-hidden shadow-card flex flex-col ${className}`} style={{ height: 520 }}>
-        <ChatWindow
-          messages={messages}
-          isTyping={isTyping}
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          handleSubmit={handleSubmit}
-          handleSend={handleSend}
-          messagesEndRef={messagesEndRef}
-          onClose={() => {}}
-          inline
-        />
+        {needsPicker ? (
+          <BusinessPicker
+            pickerInput={pickerInput}
+            setPickerInput={setPickerInput}
+            pickerStatus={pickerStatus}
+            handlePickerSubmit={handlePickerSubmit}
+            onClose={() => {}}
+            inline
+          />
+        ) : (
+          <ChatWindow
+            messages={messages}
+            isTyping={isTyping}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            handleSubmit={handleSubmit}
+            handleSend={handleSend}
+            messagesEndRef={messagesEndRef}
+            onClose={() => {}}
+            headerLabel={pickedBusinessName || undefined}
+            inline
+          />
+        )}
       </div>
     )
   }
@@ -148,18 +200,28 @@ export default function ChatWidget({ inline = false, className = '', businessId,
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="mb-4 w-[calc(100vw-3rem)] max-w-[380px] h-[70vh] max-h-[520px] sm:w-[380px] sm:h-[520px] bg-navy-800 rounded-3xl border border-white/10 overflow-hidden shadow-dropdown flex flex-col"
             ref={widgetRef}
-            
           >
-            <ChatWindow
-              messages={messages}
-              isTyping={isTyping}
-              inputValue={inputValue}
-              setInputValue={setInputValue}
-              handleSubmit={handleSubmit}
-              handleSend={handleSend}
-              messagesEndRef={messagesEndRef}
-              onClose={() => setIsOpen(false)}
-            />
+            {needsPicker ? (
+              <BusinessPicker
+                pickerInput={pickerInput}
+                setPickerInput={setPickerInput}
+                pickerStatus={pickerStatus}
+                handlePickerSubmit={handlePickerSubmit}
+                onClose={() => setIsOpen(false)}
+              />
+            ) : (
+              <ChatWindow
+                messages={messages}
+                isTyping={isTyping}
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                handleSubmit={handleSubmit}
+                handleSend={handleSend}
+                messagesEndRef={messagesEndRef}
+                onClose={() => setIsOpen(false)}
+                headerLabel={pickedBusinessName || undefined}
+              />
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -183,19 +245,16 @@ export default function ChatWidget({ inline = false, className = '', businessId,
   )
 }
 
-interface ChatWindowProps {
-  messages: Message[]
-  isTyping: boolean
-  inputValue: string
-  setInputValue: (v: string) => void
-  handleSubmit: (e: React.FormEvent) => void
-  handleSend: (text: string) => void
-  messagesEndRef: React.RefObject<HTMLDivElement | null>
+interface BusinessPickerProps {
+  pickerInput: string
+  setPickerInput: (v: string) => void
+  pickerStatus: 'idle' | 'loading' | 'not_found'
+  handlePickerSubmit: (e: React.FormEvent) => void
   onClose: () => void
   inline?: boolean
 }
 
-function ChatWindow({ messages, isTyping, inputValue, setInputValue, handleSubmit, handleSend, messagesEndRef, onClose, inline }: ChatWindowProps) {
+function BusinessPicker({ pickerInput, setPickerInput, pickerStatus, handlePickerSubmit, onClose, inline }: BusinessPickerProps) {
   return (
     <>
       {/* Header */}
@@ -205,7 +264,85 @@ function ChatWindow({ messages, isTyping, inputValue, setInputValue, handleSubmi
             <Bot className="w-5 h-5 text-brand-blue" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-white">NexAgent Support</p>
+            <p className="text-sm font-semibold text-white">NexAgent</p>
+            <span className="text-xs text-white/80">Find a business to chat with</span>
+          </div>
+        </div>
+        {!inline && (
+          <div className="flex items-center gap-2">
+            <button onClick={onClose} className="text-white/80 hover:text-white transition-colors">
+              <Minus className="w-[18px] h-[18px]" />
+            </button>
+            <button onClick={onClose} className="text-white/80 hover:text-white transition-colors">
+              <X className="w-[18px] h-[18px]" />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Picker Body */}
+      <div className="flex-1 flex flex-col items-center justify-center p-6 bg-white text-center">
+        <div className="w-12 h-12 rounded-full gradient-primary flex items-center justify-center mb-4">
+          <Search className="w-6 h-6 text-white" />
+        </div>
+        <p className="text-sm font-semibold text-slate-900 mb-1">Which business would you like to chat with?</p>
+        <p className="text-xs text-slate-500 mb-5">Type their exact company name as they registered it on NexAgent.</p>
+
+        <form onSubmit={handlePickerSubmit} className="w-full max-w-[280px]">
+          <input
+            type="text"
+            value={pickerInput}
+            onChange={(e) => setPickerInput(e.target.value)}
+            placeholder="e.g. Ibom Test Co"
+            className="w-full border border-slate-200 rounded-full px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all"
+          />
+          <button
+            type="submit"
+            disabled={!pickerInput.trim() || pickerStatus === 'loading'}
+            className="w-full mt-3 py-2.5 text-sm font-semibold text-white rounded-full gradient-primary hover:shadow-[0_4px_20px_rgba(4,120,87,0.4)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {pickerStatus === 'loading' ? 'Searching...' : 'Start chat'}
+          </button>
+        </form>
+
+        {pickerStatus === 'not_found' && (
+          <motion.p
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-4 text-xs text-red-500 max-w-[260px]"
+          >
+            That business isn't registered on NexAgent (or hasn't been approved yet). Double-check the spelling, or ask them to sign up.
+          </motion.p>
+        )}
+      </div>
+    </>
+  )
+}
+
+interface ChatWindowProps {
+  messages: Message[]
+  isTyping: boolean
+  inputValue: string
+  setInputValue: (v: string) => void
+  handleSubmit: (e: React.FormEvent) => void
+  handleSend: (text: string) => void
+  messagesEndRef: React.RefObject<HTMLDivElement | null>
+  onClose: () => void
+  headerLabel?: string
+  inline?: boolean
+}
+
+function ChatWindow({ messages, isTyping, inputValue, setInputValue, handleSubmit, handleSend, messagesEndRef, onClose, headerLabel, inline }: ChatWindowProps) {
+  return (
+    <>
+      {/* Header */}
+      <div className="h-[60px] gradient-primary flex items-center justify-between px-5 flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center">
+            <Bot className="w-5 h-5 text-brand-blue" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-white">{headerLabel || 'NexAgent Support'}</p>
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <span className="text-xs text-white/80">Online</span>
