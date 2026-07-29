@@ -48,11 +48,11 @@ async function handleResponse(res: Response) {
   return res.json()
 }
 
-export async function signup(email: string, password: string, businessName: string) {
+export async function signup(email: string, password: string, fullName: string, businessName: string) {
   const res = await fetch(`${API_URL}/api/auth/signup`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password, business_name: businessName }),
+    body: JSON.stringify({ email, password, full_name: fullName, business_name: businessName }),
   })
   const data = await handleResponse(res)
   setToken(data.access_token)
@@ -112,5 +112,20 @@ export async function chatQuery(businessId: string, query: string, docId?: strin
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ business_id: businessId, query, doc_id: docId }),
   })
+  return handleResponse(res)
+}
+
+export interface BusinessSummary {
+  id: string
+  business_name: string
+}
+
+export async function listBusinesses(): Promise<BusinessSummary[]> {
+  const res = await fetch(`${API_URL}/api/businesses`)
+  return handleResponse(res)
+}
+
+export async function lookupBusiness(name: string): Promise<BusinessSummary> {
+  const res = await fetch(`${API_URL}/api/businesses/lookup?name=${encodeURIComponent(name)}`)
   return handleResponse(res)
 }

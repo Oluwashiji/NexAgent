@@ -4,7 +4,9 @@ import * as api from '@/lib/api'
 interface AuthUser {
   id: string
   email: string
+  full_name: string | null
   business_name: string | null
+  is_approved: boolean
 }
 
 interface AuthContextValue {
@@ -12,7 +14,7 @@ interface AuthContextValue {
   isLoading: boolean
   isAuthenticated: boolean
   login: (email: string, password: string) => Promise<void>
-  signup: (email: string, password: string, businessName: string) => Promise<void>
+  signup: (email: string, password: string, fullName: string, businessName: string) => Promise<void>
   logout: () => void
 }
 
@@ -54,8 +56,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(await res.json())
   }
 
-  async function signup(email: string, password: string, businessName: string) {
-    await api.signup(email, password, businessName)
+  async function signup(email: string, password: string, fullName: string, businessName: string) {
+    await api.signup(email, password, fullName, businessName)
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
       headers: { Authorization: `Bearer ${api.getToken()}` },
     })

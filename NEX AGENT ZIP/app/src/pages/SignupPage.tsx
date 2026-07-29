@@ -9,6 +9,7 @@ export default function SignupPage() {
   const navigate = useNavigate()
   const { signup } = useAuth()
   const [name, setName] = useState('')
+  const [businessName, setBusinessName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -28,6 +29,7 @@ export default function SignupPage() {
   const validate = () => {
     const newErrors: Record<string, string> = {}
     if (!name || name.length < 2) newErrors.name = 'Name must be at least 2 characters'
+    if (!businessName || businessName.length < 2) newErrors.businessName = 'Company name must be at least 2 characters'
     if (!email) newErrors.email = 'Email is required'
     else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Invalid email format'
     if (!password) newErrors.password = 'Password is required'
@@ -45,7 +47,7 @@ export default function SignupPage() {
 
     setIsSubmitting(true)
     try {
-      await signup(email, password, name)
+      await signup(email, password, name, businessName)
       navigate('/dashboard')
     } catch (err) {
       const message = err instanceof ApiError ? err.message : 'Something went wrong. Please try again.'
@@ -129,7 +131,7 @@ export default function SignupPage() {
             )}
 
             {/* Name */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.22 }}>
               <label className="block text-sm font-medium text-slate-400 mb-2">Full name</label>
               <input
                 type="text"
@@ -139,6 +141,19 @@ export default function SignupPage() {
                 className={`w-full bg-navy-700 border ${errors.name ? 'border-red-500' : 'border-white/10'} rounded-[10px] px-4 py-3 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all`}
               />
               {errors.name && <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="mt-1 text-xs text-red-400">{errors.name}</motion.p>}
+            </motion.div>
+
+            {/* Company Name */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.27 }}>
+              <label className="block text-sm font-medium text-slate-400 mb-2">Company name</label>
+              <input
+                type="text"
+                value={businessName}
+                onChange={(e) => { setBusinessName(e.target.value); setErrors(prev => ({ ...prev, businessName: '' })) }}
+                placeholder="Your company's name"
+                className={`w-full bg-navy-700 border ${errors.businessName ? 'border-red-500' : 'border-white/10'} rounded-[10px] px-4 py-3 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all`}
+              />
+              {errors.businessName && <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="mt-1 text-xs text-red-400">{errors.businessName}</motion.p>}
             </motion.div>
 
             {/* Email */}
@@ -194,7 +209,6 @@ export default function SignupPage() {
               {errors.confirmPassword && <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="mt-1 text-xs text-red-400">{errors.confirmPassword}</motion.p>}
             </motion.div>
 
-            {/* Terms Checkbox */}
             {/* Terms Checkbox */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45 }} className="flex items-start gap-3">
               <button
