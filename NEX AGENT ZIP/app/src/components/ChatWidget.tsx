@@ -190,7 +190,7 @@ export default function ChatWidget({ inline = false, className = '', businessId,
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-[300]">
+   <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[300]">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -198,7 +198,7 @@ export default function ChatWidget({ inline = false, className = '', businessId,
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-4 w-[calc(100vw-3rem)] max-w-[380px] h-[70vh] max-h-[520px] sm:w-[380px] sm:h-[520px] bg-navy-800 rounded-3xl border border-white/10 overflow-hidden shadow-dropdown flex flex-col"
+           className="mb-4 w-[320px] max-w-[90vw] h-[440px] max-h-[80vh] sm:w-[380px] sm:h-[520px] sm:max-h-[520px] bg-navy-800 rounded-3xl border border-white/10 overflow-hidden shadow-dropdown flex flex-col"
             ref={widgetRef}
           >
             {needsPicker ? (
@@ -285,7 +285,7 @@ function BusinessPicker({ pickerInput, setPickerInput, pickerStatus, handlePicke
         <div className="w-12 h-12 rounded-full gradient-primary flex items-center justify-center mb-4">
           <Search className="w-6 h-6 text-white" />
         </div>
-        <p className="text-sm font-semibold text-slate-900 mb-1">Which business would you like to chat with?</p>
+        <p className="text-sm font-semibold text-slate-50 mb-1">Which business would you like to chat with?</p>
         <p className="text-xs text-slate-500 mb-5">Type their exact company name as they registered it on NexAgent.</p>
 
         <form onSubmit={handlePickerSubmit} className="w-full max-w-[280px]">
@@ -293,8 +293,8 @@ function BusinessPicker({ pickerInput, setPickerInput, pickerStatus, handlePicke
             type="text"
             value={pickerInput}
             onChange={(e) => setPickerInput(e.target.value)}
-            placeholder="e.g. Ibom Test Co"
-            className="w-full border border-slate-200 rounded-full px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all"
+            placeholder="e.g. Akinsemoyin Ventures"
+             className="w-full border border-slate-200 rounded-full px-4 py-2.5 text-sm text-slate-50 placeholder:text-slate-400 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all"
           />
           <button
             type="submit"
