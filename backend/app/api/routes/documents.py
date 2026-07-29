@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
+from fastapi.concurrency import run_in_threadpool
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
@@ -77,7 +78,12 @@ async def upload_document(
     db.add(document)
     db.commit()
 
-    add_chunks(db=db, doc_id=doc_id, filename=file.filename, chunks=chunks, owner_id=str(current_user.id))
+    # add_chunks does CPU-bound embedding work synchronously - running it
+    # via run_in_threadpool keeps it off the main event loop, so it can't
+    # freeze every other request (login, chat, other uploads) while it runs.
+    await run_in_threadpool(
+        add_chunks, db=db, doc_id=doc_id, filename=file.filename, chunks=chunks, owner_id=str(current_user.id)
+    )
 
     metadata = {
         "doc_id": doc_id,
