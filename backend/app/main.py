@@ -12,8 +12,8 @@ from sqlalchemy import text
 
 from app.core.config import settings
 from app.core.database import Base, engine
-from app.models import user, document, chunk  # noqa: F401 - imported so their tables get registered
-from app.api.routes import health, documents, chat, auth, businesses
+from app.models import user, document, chunk, chat_log  # noqa: F401 - imported so their tables get registered
+from app.api.routes import health, documents, chat, auth, businesses, analytics
 from app.services.vector_store import get_embedding_function
 
 app = FastAPI(title="NexAgent API", version="0.1.0")
@@ -30,10 +30,7 @@ with engine.connect() as conn:
 Base.metadata.create_all(bind=engine)
 
 # Loads the ONNX embedding model into memory now, during boot, instead of
-# on whichever unlucky user's request happens to trigger it first. On a
-# cold Render instance this download/load can take a while - better that
-# delay happens here (once, at deploy time) than freezing a live upload
-# or chat request.
+# on whichever unlucky user's request happens to trigger it first.
 get_embedding_function()
 
 app.add_middleware(
@@ -49,6 +46,7 @@ app.include_router(documents.router, prefix="/api", tags=["documents"])
 app.include_router(chat.router, prefix="/api", tags=["chat"])
 app.include_router(auth.router, prefix="/api", tags=["auth"])
 app.include_router(businesses.router, prefix="/api", tags=["businesses"])
+app.include_router(analytics.router, prefix="/api", tags=["analytics"])
 
 
 @app.get("/")
