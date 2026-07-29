@@ -51,7 +51,7 @@ export default function SettingsTab() {
           <h3 className="text-lg font-semibold text-slate-50 mb-6">Profile</h3>
           <div className="flex items-center gap-4 mb-6">
             <div className="w-16 h-16 rounded-full gradient-primary flex items-center justify-center text-white text-xl font-bold">
-              JD
+              NA
             </div>
             <button className="text-sm text-brand-blue hover:underline cursor-pointer">
               Change avatar
@@ -71,7 +71,7 @@ export default function SettingsTab() {
               <label className="block text-sm font-medium text-slate-400 mb-2">Email</label>
               <input
                 type="email"
-                value="john.doe@company.com"
+                value="yourcompany@company.com"
                 disabled
                 className="w-full bg-navy-700/50 border border-white/5 rounded-[10px] px-4 py-3 text-sm text-slate-500 cursor-not-allowed"
               />
@@ -156,7 +156,7 @@ export default function SettingsTab() {
       {/* Danger Zone */}
       <AnimatedSection className="mt-6">
         <GlassCard>
-          <h3 className="text-lg font-semibold text-red-400 mb-4">Danger Zone</h3>
+          <h3 className="text-lg font-semibold text-red-400 mb-4">Delete Your Business</h3>
           <button className="px-5 py-2.5 text-sm font-medium text-red-400 rounded-[10px] border border-red-500/30 hover:bg-red-500/10 transition-all cursor-pointer">
             Delete Account
           </button>
