@@ -12,6 +12,7 @@ import {
   X,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import ThemeToggle from '@/components/ThemeToggle'
 
 const NAV_ITEMS = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
@@ -43,11 +44,12 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   const SidebarContent = () => (
     <>
       {/* Header */}
-      <div className="px-4 mb-8">
+       <div className="px-4 mb-8 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full gradient-primary" />
           <span className="text-lg font-bold text-slate-50">NexAgent</span>
         </Link>
+        <ThemeToggle />
       </div>
 
       {/* Navigation */}
@@ -75,11 +77,11 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       <div className="mt-auto px-3 pt-6 border-t border-white/10">
        <div className="flex items-center gap-3 px-4 py-3 mb-2">
           <div className="w-9 h-9 rounded-full gradient-primary flex items-center justify-center text-white text-sm font-semibold">
-            {(user?.business_name || user?.email || '?').charAt(0).toUpperCase()}
+            {(user?.full_name || user?.business_name || user?.email || '?').charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-slate-50 truncate">{user?.business_name || user?.email || 'Loading...'}</p>
-            <p className="text-xs text-slate-500">Free Plan</p>
+            <p className="text-sm font-medium text-slate-50 truncate">{user?.full_name || user?.email || 'Loading...'}</p>
+            <p className="text-xs text-slate-500 truncate">{user?.business_name || 'Free Plan'}</p>
           </div>
         </div>
         <button

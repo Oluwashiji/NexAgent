@@ -129,3 +129,52 @@ export async function lookupBusiness(name: string): Promise<BusinessSummary> {
   const res = await fetch(`${API_URL}/api/businesses/lookup?name=${encodeURIComponent(name)}`)
   return handleResponse(res)
 }
+
+export interface AnalyticsStats {
+  chats_this_month: number
+  chats_today: number
+  avg_response_ms: number | null
+}
+
+export async function getAnalyticsStats(): Promise<AnalyticsStats> {
+  const res = await fetch(`${API_URL}/api/analytics/stats`, { headers: authHeaders() })
+  return handleResponse(res)
+}
+
+export interface VolumePoint {
+  date: string
+  chats: number
+}
+
+export async function getChatVolume(days = 14): Promise<VolumePoint[]> {
+  const res = await fetch(`${API_URL}/api/analytics/volume?days=${days}`, { headers: authHeaders() })
+  return handleResponse(res)
+}
+
+export interface TopQuestion {
+  question: string
+  count: number
+}
+
+export async function getTopQuestions(limit = 5): Promise<TopQuestion[]> {
+  const res = await fetch(`${API_URL}/api/analytics/top-questions?limit=${limit}`, { headers: authHeaders() })
+  return handleResponse(res)
+}
+
+export interface RecentConversation {
+  time: string
+  query: string
+  answer: string
+}
+
+export interface RecentConversationsResponse {
+  total: number
+  page: number
+  page_size: number
+  conversations: RecentConversation[]
+}
+
+export async function getRecentConversations(page = 1, pageSize = 5): Promise<RecentConversationsResponse> {
+  const res = await fetch(`${API_URL}/api/analytics/recent?page=${page}&page_size=${pageSize}`, { headers: authHeaders() })
+  return handleResponse(res)
+}
