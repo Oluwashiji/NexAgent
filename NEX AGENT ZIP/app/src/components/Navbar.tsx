@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
-import ThemeToggle from '@/components/ThemeToggle'
 
 const NAV_LINKS = [
   { label: 'Features', href: '#features' },
@@ -47,7 +46,7 @@ export default function Navbar() {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
             {NAV_LINKS.map((link) => (
-              <a
+              
                 key={link.label}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
@@ -59,15 +58,13 @@ export default function Navbar() {
           </div>
 
           {/* CTA */}
-           <div className="hidden md:flex items-center gap-4">
-            <ThemeToggle />
+          <div className="hidden md:flex items-center gap-4">
             <Link
               to="/signup"
               className="px-7 py-3 text-sm font-semibold text-white rounded-[10px] gradient-primary shadow-[0_2px_12px_rgba(4,120,87,0.3)] hover:shadow-[0_4px_20px_rgba(4,120,87,0.4)] hover:-translate-y-0.5 transition-all"
             >
               Get Started
             </Link>
-            <ThemeToggle className="mt-2" />
           </div>
 
           {/* Mobile Hamburger */}
@@ -92,7 +89,7 @@ export default function Navbar() {
           >
             <div className="flex flex-col items-center gap-6 p-8">
               {NAV_LINKS.map((link) => (
-                <a
+                
                   key={link.label}
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}

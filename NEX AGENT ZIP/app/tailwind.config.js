@@ -48,31 +48,27 @@ module.exports = {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // navy/slate/brand now read from CSS variables (defined in index.css
-        // for :root and .dark separately) instead of fixed hex, so adding
-        // the "dark" class to <html> re-skins every component that already
-        // uses these color names - no per-component changes needed.
         navy: {
-          900: 'rgb(var(--navy-900) / <alpha-value>)',
-          800: 'rgb(var(--navy-800) / <alpha-value>)',
-          700: 'rgb(var(--navy-700) / <alpha-value>)',
+          900: '#FFFFFF',
+          800: '#FDF8EF',
+          700: '#F3E9D8',
         },
         brand: {
-          blue: 'rgb(var(--brand-blue) / <alpha-value>)',
-          violet: 'rgb(var(--brand-violet) / <alpha-value>)',
+          blue: '#047857',
+          violet: '#D4AF37',
           cyan: '#A9784F',
         },
         slate: {
-          50: 'rgb(var(--slate-50) / <alpha-value>)',
-          100: 'rgb(var(--slate-100) / <alpha-value>)',
-          200: 'rgb(var(--slate-200) / <alpha-value>)',
-          300: 'rgb(var(--slate-300) / <alpha-value>)',
-          400: 'rgb(var(--slate-400) / <alpha-value>)',
-          500: 'rgb(var(--slate-500) / <alpha-value>)',
-          600: 'rgb(var(--slate-600) / <alpha-value>)',
-          700: 'rgb(var(--slate-700) / <alpha-value>)',
-          800: 'rgb(var(--slate-800) / <alpha-value>)',
-          900: 'rgb(var(--slate-900) / <alpha-value>)',
+          50: '#241C14',
+          100: '#2E2419',
+          200: '#3D3226',
+          300: '#5A4B3A',
+          400: '#6B5B4D',
+          500: '#8A7A6B',
+          600: '#A9784F',
+          700: '#C9A26D',
+          800: '#E8DFD2',
+          900: '#FDF8EF',
         },
       },
       fontFamily: {

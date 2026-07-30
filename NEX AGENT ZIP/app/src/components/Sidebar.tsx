@@ -12,7 +12,6 @@ import {
   X,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import ThemeToggle from '@/components/ThemeToggle'
 
 const NAV_ITEMS = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
@@ -44,12 +43,11 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   const SidebarContent = () => (
     <>
       {/* Header */}
-       <div className="px-4 mb-8 flex items-center justify-between">
+      <div className="px-4 mb-8">
         <Link to="/" className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full gradient-primary" />
           <span className="text-lg font-bold text-slate-50">NexAgent</span>
         </Link>
-        <ThemeToggle />
       </div>
 
       {/* Navigation */}
